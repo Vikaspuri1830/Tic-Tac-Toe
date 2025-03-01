@@ -33,3 +33,16 @@ A simple web-based Tic Tac Toe game that allows two players to compete against e
 - Improve UI with animations and sound effects.
 - Implement an AI opponent for single-player mode.
 
+## Screenshots 📸
+
+### Landing Page
+![Landing Page](Landinfg%20Page.png)
+
+### Player Win
+![Player Win](Player%20Win.png)
+
+### Match Draw
+![Match Draw](Match%20Draw.png)
+
+## Author ✨
+[Vikaspuri1830](https://github.com/Vikaspuri1830)
