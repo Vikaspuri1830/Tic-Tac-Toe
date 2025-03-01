@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #121212;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            justify-content: center;
+            height: 100vh;
+            align-items: center;
+            font-family: sans-serif;
+            color: white;
+        }
+
+        .mainbox {
+            width: 350px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .box {
+            height: 100px;
+            width: 100px;
+            border: 2px solid #f39c12;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5rem;
+            color: aliceblue;
+            cursor: pointer;
+        }
+
+        .box:hover {
+            transform: scale(0.9);
+        }
+
+        .danger {
+            background-color: red;
+        }
+
+        .success {
+            background-color: green;
+        }
+
+        .alert {
+            background-color: #f39c12;
+            border-radius: 20px;
+            color: white;
+            padding: 1rem 2rem;
+        }
+
+        .d-none {
+            display: none;
+        }
+
+        .playerBox {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .inputBox {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .inputBox input, .inputBox button {
+            padding: 10px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .inputBox button {
+            background: #f39c12;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="output"></div>
+
+    <div class="inputBox" id="playerCard">
+        <input id="player1" type="text" placeholder="Enter Player 1 Name">
+        <input id="player2" type="text" placeholder="Enter Player 2 Name">
+        <button onclick="startGame()">Start Game</button>
+    </div>
+
+    <div id="gameBox" class="d-none">
+        <div class="playerBox">
+            <h1><span id="p1"></span> : <span id="p1WinCount">0</span></h1>
+            <h1><span id="p2"></span> : <span id="p2WinCount">0</span></h1>
+            <h1>Draws: <span id="totalDrowMatch">0</span></h1>
+        </div>
+        <br>
+        <div class="mainbox">
+            <div class="box" id="b1" onclick="handleSelect('b1')"></div>
+            <div class="box" id="b2" onclick="handleSelect('b2')"></div>
+            <div class="box" id="b3" onclick="handleSelect('b3')"></div>
+            <div class="box" id="b4" onclick="handleSelect('b4')"></div>
+            <div class="box" id="b5" onclick="handleSelect('b5')"></div>
+            <div class="box" id="b6" onclick="handleSelect('b6')"></div>
+            <div class="box" id="b7" onclick="handleSelect('b7')"></div>
+            <div class="box" id="b8" onclick="handleSelect('b8')"></div>
+            <div class="box" id="b9" onclick="handleSelect('b9')"></div>
+        </div>
+    </div>
+
+    <script>
+        let chance = true;
+        let player1WinCount = 0;
+        let player2WinCount = 0;
+        let totalDrowMatch = 0;
+        let gameOver = false;
+
+        function startGame() {
+            let player1 = document.getElementById("player1").value;
+            let player2 = document.getElementById("player2").value;
+
+            if (!player1 || !player2) {
+                alert("Please enter both player names");
+                return;
+            }
+
+            document.getElementById("p1").innerText = player1;
+            document.getElementById("p2").innerText = player2;
+            document.getElementById("playerCard").classList.add("d-none");
+            document.getElementById("gameBox").classList.remove("d-none");
+        }
+
+        function handleSelect(id) {
+            if (gameOver) return; // Prevent clicks after game is over
+
+            let box = document.getElementById(id);
+            if (box.innerText !== "") return;
+
+            if (chance) {
+                box.classList.add("danger");
+                box.innerText = "X";
+            } else {
+                box.classList.add("success");
+                box.innerText = "O";
+            }
+            chance = !chance;
+            checkGameStatus();
+        }
+
+        function checkGameStatus() {
+            let winPatterns = [
+                ["b1", "b2", "b3"], ["b4", "b5", "b6"], ["b7", "b8", "b9"],
+                ["b1", "b4", "b7"], ["b2", "b5", "b8"], ["b3", "b6", "b9"],
+                ["b1", "b5", "b9"], ["b3", "b5", "b7"]
+            ];
+
+            for (let pattern of winPatterns) {
+                let [a, b, c] = pattern;
+                let boxA = document.getElementById(a).innerText;
+                let boxB = document.getElementById(b).innerText;
+                let boxC = document.getElementById(c).innerText;
+
+                if (boxA && boxA === boxB && boxB === boxC) {
+                    document.getElementById("output").innerHTML = `<div class='alert'><h1>${boxA === "X" ? document.getElementById("p1").innerText : document.getElementById("p2").innerText} Wins!</h1></div>`;
+                    gameOver = true;
+                    boxA === "X" ? player1WinCount++ : player2WinCount++;
+                    document.getElementById("p1WinCount").innerText = player1WinCount;
+                    document.getElementById("p2WinCount").innerText = player2WinCount;
+                    return setTimeout(resetGame, 2000);
+                }
+            }
+
+            if ([...document.querySelectorAll(".box")].every(box => box.innerText !== "")) {
+                document.getElementById("output").innerHTML = `<div class='alert'><h1>Draw!</h1></div>`;
+                totalDrowMatch++;
+                document.getElementById("totalDrowMatch").innerText = totalDrowMatch;
+                gameOver = true;
+                setTimeout(resetGame, 2000);
+            }
+        }
+
+        function resetGame() {
+            document.querySelectorAll(".box").forEach(box => {
+                box.innerText = "";
+                box.classList.remove("danger", "success");
+            });
+            document.getElementById("output").innerHTML = "";
+            gameOver = false;
+            chance = true;
+        }
+    </script>
+</body>
+
+</html>
